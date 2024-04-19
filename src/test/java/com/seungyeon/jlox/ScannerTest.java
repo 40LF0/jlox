@@ -65,4 +65,16 @@ public class ScannerTest {
 
     assertEquals(TokenType.EOF, tokens.get(0).type);
   }
+
+  @Test
+  public void testStringLiteral() {
+    String source = "\"Hello, world!\"";
+    Scanner scanner = new Scanner(source);
+    List<Token> tokens = scanner.scanTokens();
+    assertEquals(2, tokens.size());
+
+    assertEquals(TokenType.STRING, tokens.get(0).type);
+    assertEquals("Hello, world!", tokens.get(0).literal);
+    assertEquals(TokenType.EOF, tokens.get(1).type);
+  }
 }
