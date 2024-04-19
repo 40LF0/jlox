@@ -77,4 +77,18 @@ public class ScannerTest {
     assertEquals("Hello, world!", tokens.get(0).literal);
     assertEquals(TokenType.EOF, tokens.get(1).type);
   }
+
+  @Test
+  public void testNumericLiteral() {
+    String source = "123 45.67";
+    Scanner scanner = new Scanner(source);
+    List<Token> tokens = scanner.scanTokens();
+    assertEquals(3, tokens.size());
+
+    assertEquals(TokenType.NUMBER, tokens.get(0).type);
+    assertEquals(123.0, tokens.get(0).literal);
+    assertEquals(TokenType.NUMBER, tokens.get(1).type);
+    assertEquals(45.67, tokens.get(1).literal);
+    assertEquals(TokenType.EOF, tokens.get(2).type);
+  }
 }
