@@ -80,7 +80,7 @@ class Scanner {
 
   private void string() {
     while (peek() != '"' && !isAtEnd()) {
-      if(peek() == '\n') line++;
+      if (peek() == '\n') line++;
       advance();
     }
 
@@ -93,18 +93,18 @@ class Scanner {
     advance();
 
     // Remove double quotes start and end of a string
-    String value = source.substring(start + 1, current -1);
+    String value = source.substring(start + 1, current - 1);
     addToken(STRING, value);
   }
-
 
   /** Returns the character at the current position and moves the pointer to the next position. */
   private char advance() {
     return source.charAt(current++);
   }
 
-  /** Conditionally advances the current pointer
-   * Advance only if the current character matches the expected character.
+  /**
+   * Conditionally advances the current pointer Advance only if the current character matches the
+   * expected character.
    */
   private boolean match(char expected) {
     if (isAtEnd()) return false;
