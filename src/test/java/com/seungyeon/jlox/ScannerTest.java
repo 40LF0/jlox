@@ -55,4 +55,14 @@ public class ScannerTest {
     assertEquals(TokenType.SLASH, tokens.get(1).type);
     assertEquals(TokenType.EOF, tokens.get(2).type);
   }
+
+  @Test
+  public void testWhitespaceAndNewlineCharacters() {
+    String source = " \r\t\n";
+    Scanner scanner = new Scanner(source);
+    List<Token> tokens = scanner.scanTokens();
+    assertEquals(1, tokens.size());
+
+    assertEquals(TokenType.EOF, tokens.get(0).type);
+  }
 }
