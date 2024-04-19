@@ -91,4 +91,48 @@ public class ScannerTest {
     assertEquals(45.67, tokens.get(1).literal);
     assertEquals(TokenType.EOF, tokens.get(2).type);
   }
+
+  @Test
+  public void testIdentifier() {
+    String source = "if else var x variable";
+    Scanner scanner = new Scanner(source);
+    List<Token> tokens = scanner.scanTokens();
+    assertEquals(6, tokens.size());
+
+    assertEquals(TokenType.IF, tokens.get(0).type);
+    assertEquals(TokenType.ELSE, tokens.get(1).type);
+    assertEquals(TokenType.VAR, tokens.get(2).type);
+    assertEquals(TokenType.IDENTIFIER, tokens.get(3).type);
+    assertEquals(TokenType.IDENTIFIER, tokens.get(4).type);
+    assertEquals(TokenType.EOF, tokens.get(5).type);
+  }
+
+  @Test
+  public void testReservedKeywords() {
+    String source = "if else var and class else false for fun if nil or print return super this true var while";
+    Scanner scanner = new Scanner(source);
+    List<Token> tokens = scanner.scanTokens();
+    assertEquals(20, tokens.size());
+
+    assertEquals(TokenType.IF, tokens.get(0).type);
+    assertEquals(TokenType.ELSE, tokens.get(1).type);
+    assertEquals(TokenType.VAR, tokens.get(2).type);
+    assertEquals(TokenType.AND, tokens.get(3).type);
+    assertEquals(TokenType.CLASS, tokens.get(4).type);
+    assertEquals(TokenType.ELSE, tokens.get(5).type);
+    assertEquals(TokenType.FALSE, tokens.get(6).type);
+    assertEquals(TokenType.FOR, tokens.get(7).type);
+    assertEquals(TokenType.FUN, tokens.get(8).type);
+    assertEquals(TokenType.IF, tokens.get(9).type);
+    assertEquals(TokenType.NIL, tokens.get(10).type);
+    assertEquals(TokenType.OR, tokens.get(11).type);
+    assertEquals(TokenType.PRINT, tokens.get(12).type);
+    assertEquals(TokenType.RETURN, tokens.get(13).type);
+    assertEquals(TokenType.SUPER, tokens.get(14).type);
+    assertEquals(TokenType.THIS, tokens.get(15).type);
+    assertEquals(TokenType.TRUE, tokens.get(16).type);
+    assertEquals(TokenType.VAR, tokens.get(17).type);
+    assertEquals(TokenType.WHILE, tokens.get(18).type);
+    assertEquals(TokenType.EOF, tokens.get(19).type);
+  }
 }
