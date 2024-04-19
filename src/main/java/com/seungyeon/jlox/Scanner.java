@@ -103,6 +103,7 @@ class Scanner {
         }
         if (isAlpha(c)) {
           identifier();
+          break;
         }
         Lox.error(line, "Unexpected character.");
         break;
