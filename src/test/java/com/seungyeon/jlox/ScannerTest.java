@@ -43,4 +43,16 @@ public class ScannerTest {
     assertEquals(TokenType.GREATER_EQUAL, tokens.get(7).type);
     assertEquals(TokenType.EOF, tokens.get(8).type);
   }
+
+  @Test
+  public void testSlashOperatorVsComment() {
+    String source = "/ / // this is a comment";
+    Scanner scanner = new Scanner(source);
+    List<Token> tokens = scanner.scanTokens();
+    assertEquals(3, tokens.size());
+
+    assertEquals(TokenType.SLASH, tokens.get(0).type);
+    assertEquals(TokenType.SLASH, tokens.get(1).type);
+    assertEquals(TokenType.EOF, tokens.get(2).type);
+  }
 }
