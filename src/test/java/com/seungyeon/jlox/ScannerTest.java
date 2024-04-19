@@ -25,4 +25,22 @@ public class ScannerTest {
     assertEquals(TokenType.STAR, tokens.get(9).type);
     assertEquals(TokenType.EOF, tokens.get(10).type);
   }
+
+  @Test
+  public void testOperatorTokensWithNextCharacter() {
+    String source = "! != = == < <= > >=";
+    Scanner scanner = new Scanner(source);
+    List<Token> tokens = scanner.scanTokens();
+    assertEquals(9, tokens.size());
+
+    assertEquals(TokenType.BANG, tokens.get(0).type);
+    assertEquals(TokenType.BANG_EQUAL, tokens.get(1).type);
+    assertEquals(TokenType.EQUAL, tokens.get(2).type);
+    assertEquals(TokenType.EQUAL_EQUAL, tokens.get(3).type);
+    assertEquals(TokenType.LESS, tokens.get(4).type);
+    assertEquals(TokenType.LESS_EQUAL, tokens.get(5).type);
+    assertEquals(TokenType.GREATER, tokens.get(6).type);
+    assertEquals(TokenType.GREATER_EQUAL, tokens.get(7).type);
+    assertEquals(TokenType.EOF, tokens.get(8).type);
+  }
 }
