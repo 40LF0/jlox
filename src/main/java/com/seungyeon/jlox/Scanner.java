@@ -56,8 +56,8 @@ class Scanner {
         addToken(match('=') ? GREATER_EQUAL : GREATER);
         break;
       case '/':
-        if(match('/')){
-          while(peek() != '\n' && !isAtEnd()) advance();
+        if (match('/')) {
+          while (peek() != '\n' && !isAtEnd()) advance();
           break;
         }
         addToken(SLASH);
