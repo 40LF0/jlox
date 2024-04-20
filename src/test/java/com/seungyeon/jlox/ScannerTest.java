@@ -109,7 +109,8 @@ public class ScannerTest {
 
   @Test
   public void testReservedKeywords() {
-    String source = "if else var and class else false for fun if nil or print return super this true var while";
+    String source =
+        "if else var and class else false for fun if nil or print return super this true var while";
     Scanner scanner = new Scanner(source);
     List<Token> tokens = scanner.scanTokens();
     assertEquals(20, tokens.size());
