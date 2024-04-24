@@ -1,11 +1,14 @@
 package com.seungyeon.jlox;
 
+import static com.seungyeon.jlox.TokenType.EOF;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 
 public class Lox {
   static boolean hasError = false;
@@ -40,14 +43,27 @@ public class Lox {
   }
 
   private static void run(String source) {
-    System.out.println(source);
+    Scanner scanner = new Scanner(source);
+    List<Token> tokens = scanner.scanTokens();
+    Parser parser = new Parser(tokens);
+    Expr expression = parser.parse();
+
+    if (hasError) return;
   }
 
   static void error(int line, String message) {
     report(line, "", message);
   }
 
-  private static void report(int line, String where, String message) {
+  static void error(Token token, String message) {
+    if(token.type == EOF) {
+      report(token.line, " at end", message);
+    } else {
+      report(token.line, " at '" + token.lexeme + "'", message);
+    }
+  }
+
+  static void report(int line, String where, String message) {
     System.err.println("[line: " + line + "] Error" + where + ": " + message);
     hasError = true;
   }
