@@ -49,6 +49,8 @@ public class Lox {
     Expr expression = parser.parse();
 
     if (hasError) return;
+
+    System.out.println(new AstPrinter().print(expression));
   }
 
   static void error(int line, String message) {
