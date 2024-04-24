@@ -56,14 +56,14 @@ public class Parser {
 
   // term -> factor(("-" | "+") factor)*;
   private Expr term() {
-    return binaryOperatorHelper(this::unray, LESS, GREATER_EQUAL, LESS_EQUAL);
+    return binaryOperatorHelper(this::unary, MINUS, PLUS);
   }
 
   // unray -> ("!" | "-") unary | primary;
-  private Expr unray() {
+  private Expr unary() {
     if (match(BANG, MINUS)) {
       Token operator = previous();
-      Expr right = unray();
+      Expr right = unary();
       return new Unary(operator, right);
     }
     return primary();
