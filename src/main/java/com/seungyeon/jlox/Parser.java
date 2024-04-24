@@ -56,7 +56,12 @@ public class Parser {
 
   // term -> factor(("-" | "+") factor)*;
   private Expr term() {
-    return binaryOperatorHelper(this::unary, MINUS, PLUS);
+    return binaryOperatorHelper(this::factor, MINUS, PLUS);
+  }
+
+  // factor -> unray(("/" | "*") unary)*;
+  private Expr factor() {
+    return binaryOperatorHelper(this::unary, SLASH, STAR);
   }
 
   // unray -> ("!" | "-") unary | primary;
