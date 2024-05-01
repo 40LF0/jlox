@@ -7,6 +7,15 @@ import com.seungyeon.jlox.Expr.Unary;
 
 class Interpreter implements Expr.Visitor<Object> {
 
+  void interpret(Expr expr) {
+    try {
+      Object value = evaluate(expr);
+      System.out.println(stringify(value));
+    } catch (RuntimeError error) {
+      Lox.runtimeError(error);
+    }
+  }
+
   @Override
   public Object visitBinaryExpr(Binary expr) {
     Object left = evaluate(expr.left);
@@ -99,5 +108,17 @@ class Interpreter implements Expr.Visitor<Object> {
     if (a == null && b == null) return true;
     if (a == null) return false;
     return a.equals(b);
+  }
+
+  private String stringify(Object object) {
+    if (object == null) return "nil";
+
+    if (object instanceof Double) {
+      String text = object.toString();
+      if (text.endsWith(".0")) {
+        text = text.substring(0, text.length() - 2);
+      }
+      return text;
+    } return object.toString();
   }
 }
