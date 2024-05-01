@@ -20,20 +20,28 @@ class Interpreter implements Expr.Visitor<Object> {
         if (left instanceof String && right instanceof String) {
           return (String) left + (String) right;
         }
-        break;
+
+        throw new RuntimeError(expr.operator, "Operands must be two numbers or two String");
       case MINUS:
+        checkNumberOperand(expr.operator, left, right);
         return (double) left - (double) right;
       case SLASH:
+        checkNumberOperand(expr.operator, left, right);
         return (double) left / (double) right;
       case STAR:
+        checkNumberOperand(expr.operator, left, right);
         return (double) left * (double) right;
       case GREATER:
+        checkNumberOperand(expr.operator, left, right);
         return (double) left > (double) right;
       case GREATER_EQUAL:
+        checkNumberOperand(expr.operator, left, right);
         return (double) left >= (double) right;
       case LESS:
+        checkNumberOperand(expr.operator, left, right);
         return (double) left < (double) right;
       case LESS_EQUAL:
+        checkNumberOperand(expr.operator, left, right);
         return (double) left <= (double) right;
       case BANG_EQUAL:
         return !isEqual(left, right);
@@ -41,6 +49,16 @@ class Interpreter implements Expr.Visitor<Object> {
         return isEqual(left, right);
     }
     return null;
+  }
+
+  private void checkNumberOperand(Token operator, Object operand) {
+    if (operand instanceof Double) return;
+    throw new RuntimeError(operator, "Operand must be a number");
+  }
+
+  private void checkNumberOperand(Token operator, Object left, Object right) {
+    if (left instanceof Double && right instanceof Double) return;
+    throw new RuntimeError(operator, "Operand must be a number");
   }
 
   @Override
@@ -61,6 +79,7 @@ class Interpreter implements Expr.Visitor<Object> {
       case BANG:
         return !isTruthy(right);
       case MINUS:
+        checkNumberOperand(expr.operator, right);
         return -(double) right;
     }
     return null;
