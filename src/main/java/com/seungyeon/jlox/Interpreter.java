@@ -4,13 +4,17 @@ import com.seungyeon.jlox.Expr.Binary;
 import com.seungyeon.jlox.Expr.Grouping;
 import com.seungyeon.jlox.Expr.Literal;
 import com.seungyeon.jlox.Expr.Unary;
+import com.seungyeon.jlox.Stmt.Expression;
+import com.seungyeon.jlox.Stmt.Print;
+import java.util.List;
 
-class Interpreter implements Expr.Visitor<Object> {
+class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
-  void interpret(Expr expr) {
+  void interpret(List<Stmt> statements) {
     try {
-      Object value = evaluate(expr);
-      System.out.println(stringify(value));
+      for (Stmt statement : statements) {
+        execute(statement);
+      }
     } catch (RuntimeError error) {
       Lox.runtimeError(error);
     }
@@ -104,6 +108,10 @@ class Interpreter implements Expr.Visitor<Object> {
     return expr.accept(this);
   }
 
+  private void execute(Stmt stmt) {
+    stmt.accept(this);
+  }
+
   private boolean isEqual(Object a, Object b) {
     if (a == null && b == null) return true;
     if (a == null) return false;
@@ -119,6 +127,20 @@ class Interpreter implements Expr.Visitor<Object> {
         text = text.substring(0, text.length() - 2);
       }
       return text;
-    } return object.toString();
+    }
+    return object.toString();
+  }
+
+  @Override
+  public Void visitExpressionStmt(Expression stmt) {
+    evaluate(stmt.expression);
+    return null;
+  }
+
+  @Override
+  public Void visitPrintStmt(Print stmt) {
+    Object value = evaluate(stmt.expression);
+    System.out.println(stringify(value));
+    return null;
   }
 }
