@@ -8,6 +8,7 @@ import com.seungyeon.jlox.Expr.Grouping;
 import com.seungyeon.jlox.Expr.Literal;
 import com.seungyeon.jlox.Expr.Unary;
 import com.seungyeon.jlox.Expr.Variable;
+import com.seungyeon.jlox.Stmt.Block;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,7 +69,7 @@ class Parser {
 
   private Stmt statement() {
     if (match(PRINT)) return printStatement();
-
+    if (match(LEFT_BRACE)) return new Block(block());
     return expressionStatement();
   }
 
@@ -105,6 +106,15 @@ class Parser {
     Expr value = expression();
     consume(SEMICOLON, "Expect ';' after value.");
     return new Stmt.Expression(value);
+  }
+
+  private List<Stmt> block() {
+    List<Stmt> statements = new ArrayList<>();
+
+    while(!check(RIGHT_BRACE) && !isAtEnd()) statements.add(declaration());
+
+    consume(RIGHT_BRACE, "Expect '}' after block.");
+    return statements;
   }
 
   // equality -> comparison (("!=" | "==") comparison)* ;

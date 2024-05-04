@@ -6,6 +6,7 @@ import com.seungyeon.jlox.Expr.Grouping;
 import com.seungyeon.jlox.Expr.Literal;
 import com.seungyeon.jlox.Expr.Unary;
 import com.seungyeon.jlox.Expr.Variable;
+import com.seungyeon.jlox.Stmt.Block;
 import com.seungyeon.jlox.Stmt.Expression;
 import com.seungyeon.jlox.Stmt.Print;
 import com.seungyeon.jlox.Stmt.Var;
@@ -13,7 +14,7 @@ import java.util.List;
 
 class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
-  private final Environment environment = new Environment();
+  private Environment environment = new Environment();
 
   void interpret(List<Stmt> statements) {
     try {
@@ -129,6 +130,19 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     stmt.accept(this);
   }
 
+  private void executeBlock(List<Stmt> statements, Environment environment) {
+    Environment previous = this.environment;
+    try {
+      this.environment = environment;
+
+      for (Stmt statement : statements) {
+        execute(statement);
+      }
+    } finally{
+      this.environment = previous;
+    }
+  }
+
   private boolean isEqual(Object a, Object b) {
     if (a == null && b == null) return true;
     if (a == null) return false;
@@ -146,6 +160,12 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
       return text;
     }
     return object.toString();
+  }
+
+  @Override
+  public Void visitBlockStmt(Block stmt) {
+    executeBlock(stmt.statements, new Environment(environment));
+    return null;
   }
 
   @Override

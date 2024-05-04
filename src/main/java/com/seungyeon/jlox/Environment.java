@@ -30,7 +30,7 @@ class Environment {
   }
 
   void assign(Token name, Object value) {
-    if (values.containsKey(name.lexeme)){
+    if (values.containsKey(name.lexeme)) {
       values.replace(name.lexeme, value);
       return;
     }
