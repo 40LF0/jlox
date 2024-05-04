@@ -2,6 +2,7 @@ package com.seungyeon.jlox;
 
 import static com.seungyeon.jlox.TokenType.*;
 
+import com.seungyeon.jlox.Expr.Assign;
 import com.seungyeon.jlox.Expr.Binary;
 import com.seungyeon.jlox.Expr.Grouping;
 import com.seungyeon.jlox.Expr.Literal;
@@ -10,13 +11,13 @@ import com.seungyeon.jlox.Expr.Variable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Parser {
+class Parser {
   private static class ParseError extends RuntimeException {}
 
   private final List<Token> tokens;
   private int current = 0;
 
-  public Parser(List<Token> tokens) {
+  Parser(List<Token> tokens) {
     this.tokens = tokens;
   }
 
@@ -30,7 +31,7 @@ public class Parser {
   }
 
   private interface ExprCaller {
-    public Expr call();
+    Expr call();
   }
 
   private Expr binaryOperatorHelper(ExprCaller caller, TokenType... tokens) {
@@ -44,7 +45,25 @@ public class Parser {
   }
 
   private Expr expression() {
-    return equality();
+    return assignment();
+  }
+
+  private Expr assignment() {
+    Expr expr = equality();
+
+    if (match(EQUAL)) {
+      Token equals = previous();
+      Expr value = assignment();
+
+      if(expr instanceof Variable) {
+        Token name = ((Variable) expr).name;
+        return new Assign(name, value);
+      }
+
+      error(equals, "Invalid assignment target.");
+    }
+
+    return expr;
   }
 
   private Stmt statement() {

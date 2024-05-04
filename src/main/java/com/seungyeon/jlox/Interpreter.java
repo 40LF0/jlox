@@ -1,5 +1,6 @@
 package com.seungyeon.jlox;
 
+import com.seungyeon.jlox.Expr.Assign;
 import com.seungyeon.jlox.Expr.Binary;
 import com.seungyeon.jlox.Expr.Grouping;
 import com.seungyeon.jlox.Expr.Literal;
@@ -12,7 +13,7 @@ import java.util.List;
 
 class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
-  private Environment environment = new Environment();
+  private final Environment environment = new Environment();
 
   void interpret(List<Stmt> statements) {
     try {
@@ -22,6 +23,13 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     } catch (RuntimeError error) {
       Lox.runtimeError(error);
     }
+  }
+
+  @Override
+  public Object visitAssignExpr(Assign expr) {
+    Object value = evaluate(expr.value);
+    environment.assign(expr.name, value);
+    return value;
   }
 
   @Override
@@ -35,7 +43,7 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
           return (double) left + (double) right;
         }
         if (left instanceof String && right instanceof String) {
-          return (String) left + (String) right;
+          return left + (String) right;
         }
 
         throw new RuntimeError(expr.operator, "Operands must be two numbers or two String");
