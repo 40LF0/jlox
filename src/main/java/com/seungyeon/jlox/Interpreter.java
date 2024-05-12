@@ -12,6 +12,7 @@ import com.seungyeon.jlox.Stmt.Expression;
 import com.seungyeon.jlox.Stmt.If;
 import com.seungyeon.jlox.Stmt.Print;
 import com.seungyeon.jlox.Stmt.Var;
+import com.seungyeon.jlox.Stmt.While;
 import java.util.List;
 
 class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
@@ -216,6 +217,14 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     }
 
     environment.define(stmt.name.lexeme, value);
+    return null;
+  }
+
+  @Override
+  public Void visitWhileStmt(While stmt) {
+    while(isTruthy(evaluate(stmt.condition))){
+      execute(stmt.body);
+    }
     return null;
   }
 }
