@@ -8,6 +8,7 @@ import com.seungyeon.jlox.Expr.Unary;
 import com.seungyeon.jlox.Expr.Variable;
 import com.seungyeon.jlox.Stmt.Block;
 import com.seungyeon.jlox.Stmt.Expression;
+import com.seungyeon.jlox.Stmt.If;
 import com.seungyeon.jlox.Stmt.Print;
 import com.seungyeon.jlox.Stmt.Var;
 import java.util.List;
@@ -171,6 +172,16 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
   @Override
   public Void visitExpressionStmt(Expression stmt) {
     evaluate(stmt.expression);
+    return null;
+  }
+
+  @Override
+  public Void visitIfStmt(If stmt) {
+    if(isTruthy(evaluate(stmt.condition))){
+      execute(stmt.thenBranch);
+    } else if (stmt.elseBranch != null){
+      execute(stmt.elseBranch);
+    }
     return null;
   }
 
