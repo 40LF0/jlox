@@ -50,18 +50,42 @@ class Parser {
   }
 
   private Expr assignment() {
-    Expr expr = equality();
+    Expr expr = or();
 
     if (match(EQUAL)) {
       Token equals = previous();
       Expr value = assignment();
 
-      if(expr instanceof Variable) {
+      if (expr instanceof Variable) {
         Token name = ((Variable) expr).name;
         return new Assign(name, value);
       }
 
       error(equals, "Invalid assignment target.");
+    }
+
+    return expr;
+  }
+
+  private Expr or() {
+    Expr expr = and();
+
+    while(match(OR)) {
+      Token operator = previous();
+      Expr right = and();
+      expr = new Expr.Logical(expr, operator, right);
+    }
+
+    return expr;
+  }
+
+  private Expr and() {
+    Expr expr = equality();
+
+    while(match(AND)) {
+      Token operator = previous();
+      Expr right = equality();
+      expr = new Expr.Logical(expr, operator, right);
     }
 
     return expr;
@@ -81,7 +105,7 @@ class Parser {
 
     Stmt thenBranch = statement();
     Stmt elseBranch = null;
-    if (match(ELSE)){
+    if (match(ELSE)) {
       elseBranch = statement();
     }
 
@@ -126,7 +150,7 @@ class Parser {
   private List<Stmt> block() {
     List<Stmt> statements = new ArrayList<>();
 
-    while(!check(RIGHT_BRACE) && !isAtEnd()) statements.add(declaration());
+    while (!check(RIGHT_BRACE) && !isAtEnd()) statements.add(declaration());
 
     consume(RIGHT_BRACE, "Expect '}' after block.");
     return statements;
@@ -198,10 +222,10 @@ class Parser {
   private void synchronize() {
     advance();
 
-    while (!isAtEnd()){
+    while (!isAtEnd()) {
       if (previous().type == SEMICOLON) return;
 
-      switch (peek().type){
+      switch (peek().type) {
         case CLASS:
         case FUN:
         case VAR:

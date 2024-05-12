@@ -4,6 +4,7 @@ import com.seungyeon.jlox.Expr.Assign;
 import com.seungyeon.jlox.Expr.Binary;
 import com.seungyeon.jlox.Expr.Grouping;
 import com.seungyeon.jlox.Expr.Literal;
+import com.seungyeon.jlox.Expr.Logical;
 import com.seungyeon.jlox.Expr.Unary;
 import com.seungyeon.jlox.Expr.Variable;
 import com.seungyeon.jlox.Stmt.Block;
@@ -99,6 +100,21 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
   }
 
   @Override
+  public Object visitLogicalExpr(Logical expr) {
+    Object left = evaluate(expr.left);
+
+    if (expr.operator.type == TokenType.OR) {
+      if (isTruthy(left)) return left;
+    }
+
+    if (expr.operator.type == TokenType.AND) {
+      if (!isTruthy(left)) return left;
+    }
+
+    return evaluate(expr.right);
+  }
+
+  @Override
   public Object visitUnaryExpr(Unary expr) {
     Object right = evaluate(expr.right);
 
@@ -139,7 +155,7 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
       for (Stmt statement : statements) {
         execute(statement);
       }
-    } finally{
+    } finally {
       this.environment = previous;
     }
   }
@@ -177,9 +193,9 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
   @Override
   public Void visitIfStmt(If stmt) {
-    if(isTruthy(evaluate(stmt.condition))){
+    if (isTruthy(evaluate(stmt.condition))) {
       execute(stmt.thenBranch);
-    } else if (stmt.elseBranch != null){
+    } else if (stmt.elseBranch != null) {
       execute(stmt.elseBranch);
     }
     return null;
