@@ -2,6 +2,7 @@ package com.seungyeon.jlox;
 
 import com.seungyeon.jlox.Expr.Assign;
 import com.seungyeon.jlox.Expr.Binary;
+import com.seungyeon.jlox.Expr.Call;
 import com.seungyeon.jlox.Expr.Grouping;
 import com.seungyeon.jlox.Expr.Literal;
 import com.seungyeon.jlox.Expr.Logical;
@@ -13,6 +14,7 @@ import com.seungyeon.jlox.Stmt.If;
 import com.seungyeon.jlox.Stmt.Print;
 import com.seungyeon.jlox.Stmt.Var;
 import com.seungyeon.jlox.Stmt.While;
+import java.util.ArrayList;
 import java.util.List;
 
 class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
@@ -78,6 +80,19 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         return isEqual(left, right);
     }
     return null;
+  }
+
+  @Override
+  public Object visitCallExpr(Call expr) {
+    Object callee = evaluate(expr.callee);
+
+    List<Object> arguments = new ArrayList<>();
+    for (Expr argument : expr.arguments){
+      arguments.add(evaluate(argument));
+    }
+
+    LoxCallable function = (LoxCallable) callee;
+    return function.call(this, arguments);
   }
 
   private void checkNumberOperand(Token operator, Object operand) {
