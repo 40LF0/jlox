@@ -91,6 +91,10 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
       arguments.add(evaluate(argument));
     }
 
+    if(!(callee instanceof LoxCallable)){
+      throw new RuntimeError(expr.paren, "Can only call functions and classes.");
+    }
+
     LoxCallable function = (LoxCallable) callee;
     return function.call(this, arguments);
   }
