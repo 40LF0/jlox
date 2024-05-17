@@ -1,20 +1,7 @@
 package com.seungyeon.jlox;
 
-import com.seungyeon.jlox.Expr.Assign;
-import com.seungyeon.jlox.Expr.Binary;
-import com.seungyeon.jlox.Expr.Call;
-import com.seungyeon.jlox.Expr.Grouping;
-import com.seungyeon.jlox.Expr.Literal;
-import com.seungyeon.jlox.Expr.Logical;
-import com.seungyeon.jlox.Expr.Unary;
-import com.seungyeon.jlox.Expr.Variable;
-import com.seungyeon.jlox.Stmt.Block;
-import com.seungyeon.jlox.Stmt.Expression;
-import com.seungyeon.jlox.Stmt.Function;
-import com.seungyeon.jlox.Stmt.If;
-import com.seungyeon.jlox.Stmt.Print;
-import com.seungyeon.jlox.Stmt.Var;
-import com.seungyeon.jlox.Stmt.While;
+import com.seungyeon.jlox.Expr.*;
+import com.seungyeon.jlox.Stmt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -264,6 +251,14 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     Object value = evaluate(stmt.expression);
     System.out.println(stringify(value));
     return null;
+  }
+
+  @Override
+  public Void visitReturnStmt(Stmt.Return stmt) {
+    Object value = null;
+    if (stmt.value != null) value = evaluate(stmt.value);
+
+    throw new Return(value);
   }
 
   @Override
