@@ -152,7 +152,7 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
 
   @Override
   public Void visitVariableExpr(Variable expr) {
-    if (!scopes.empty() && scopes.peek().get(expr.name) == Boolean.FALSE) {
+    if (!scopes.empty() && scopes.peek().get(expr.name.lexeme) == Boolean.FALSE) {
       Lox.error(expr.name, "Can't read local variable in its own initializer");
     }
 
