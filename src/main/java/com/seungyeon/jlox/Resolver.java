@@ -9,6 +9,7 @@ import com.seungyeon.jlox.Expr.Logical;
 import com.seungyeon.jlox.Expr.Unary;
 import com.seungyeon.jlox.Expr.Variable;
 import com.seungyeon.jlox.Stmt.Block;
+import com.seungyeon.jlox.Stmt.Class;
 import com.seungyeon.jlox.Stmt.Expression;
 import com.seungyeon.jlox.Stmt.Function;
 import com.seungyeon.jlox.Stmt.If;
@@ -39,6 +40,13 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     beginScope();
     resolve(stmt.statements);
     endScope();
+    return null;
+  }
+
+  @Override
+  public Void visitClassStmt(Class stmt) {
+    declare(stmt.name);
+    define(stmt.name);
     return null;
   }
 
@@ -76,7 +84,6 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     if (currentFunction == FunctionType.NONE) {
       Lox.error(stmt.keyword, "Can't return from top-level code.");
     }
-
 
     if (stmt.value != null) {
       resolve(stmt.value);

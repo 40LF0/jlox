@@ -2,6 +2,7 @@ package com.seungyeon.jlox;
 
 import com.seungyeon.jlox.Expr.*;
 import com.seungyeon.jlox.Stmt.*;
+import com.seungyeon.jlox.Stmt.Class;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -50,7 +51,7 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     Object value = evaluate(expr.value);
 
     Integer distance = locals.get(expr);
-    if (distance != null){
+    if (distance != null) {
       environment.assignAt(distance, expr.name, value);
     } else {
       globals.assign(expr.name, value);
@@ -183,7 +184,7 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
   private Object lookUpVariable(Token name, Variable expr) {
     Integer distance = locals.get(expr);
-    if (distance != null){
+    if (distance != null) {
       return environment.getAt(distance, name.lexeme);
     } else {
       return globals.get(name);
@@ -239,6 +240,14 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
   @Override
   public Void visitBlockStmt(Block stmt) {
     executeBlock(stmt.statements, new Environment(environment));
+    return null;
+  }
+
+  @Override
+  public Void visitClassStmt(Class stmt) {
+    environment.define(stmt.name.lexeme, null);
+    LoxClass klass = new LoxClass(stmt.name.lexeme);
+    environment.assign(stmt.name, klass);
     return null;
   }
 
