@@ -172,7 +172,7 @@ class Parser {
     consume(LEFT_BRACE, "Expect '{' before class body.");
 
     List<Stmt.Function> methods = new ArrayList<>();
-    while (!check(RIGHT_BRACE) && !isAtEnd()){
+    while (!check(RIGHT_BRACE) && !isAtEnd()) {
       methods.add(function("method"));
     }
 
@@ -190,7 +190,7 @@ class Parser {
   private Stmt returnStatement() {
     Token keyword = previous();
     Expr value = null;
-    if (!check(SEMICOLON)){
+    if (!check(SEMICOLON)) {
       value = expression();
     }
 
@@ -229,9 +229,9 @@ class Parser {
     Token name = consume(IDENTIFIER, "Expect " + kind + " name.");
     consume(LEFT_PAREN, "Expect '(' after " + kind + " name.");
     List<Token> parameters = new ArrayList<>();
-    if (!check(RIGHT_PAREN)){
+    if (!check(RIGHT_PAREN)) {
       do {
-        if (parameters.size() >= 255){
+        if (parameters.size() >= 255) {
           error(peek(), "Can't have more than 255 parameters.");
         }
 
@@ -291,6 +291,9 @@ class Parser {
     while (true) {
       if (match(LEFT_PAREN)) {
         expr = finishCall(expr);
+      } else if (match(DOT)) {
+        Token name = consume(IDENTIFIER, "Expect property name after '.'.");
+        expr = new Expr.Get(expr, name);
       } else {
         break;
       }

@@ -3,6 +3,7 @@ package com.seungyeon.jlox;
 import com.seungyeon.jlox.Expr.Assign;
 import com.seungyeon.jlox.Expr.Binary;
 import com.seungyeon.jlox.Expr.Call;
+import com.seungyeon.jlox.Expr.Get;
 import com.seungyeon.jlox.Expr.Grouping;
 import com.seungyeon.jlox.Expr.Literal;
 import com.seungyeon.jlox.Expr.Logical;
@@ -130,6 +131,12 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
       resolve(argument);
     }
 
+    return null;
+  }
+
+  @Override
+  public Void visitGetExpr(Get expr) {
+    resolve(expr.object);
     return null;
   }
 
