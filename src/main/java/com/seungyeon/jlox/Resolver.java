@@ -8,6 +8,7 @@ import com.seungyeon.jlox.Expr.Grouping;
 import com.seungyeon.jlox.Expr.Literal;
 import com.seungyeon.jlox.Expr.Logical;
 import com.seungyeon.jlox.Expr.Set;
+import com.seungyeon.jlox.Expr.This;
 import com.seungyeon.jlox.Expr.Unary;
 import com.seungyeon.jlox.Expr.Variable;
 import com.seungyeon.jlox.Stmt.Block;
@@ -51,10 +52,16 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     declare(stmt.name);
     define(stmt.name);
 
+    beginScope();
+    scopes.peek().put("this", true);
+
     for (Stmt.Function method : stmt.methods) {
       FunctionType declaration = FunctionType.METHOD;
       resolveFunction(method, declaration);
     }
+
+    endScope();
+
     return null;
   }
 
@@ -169,6 +176,12 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
   public Void visitSetExpr(Set expr) {
     resolve(expr.value);
     resolve(expr.object);
+    return null;
+  }
+
+  @Override
+  public Void visitThisExpr(This expr) {
+    resolveLocal(expr, expr.keyword);
     return null;
   }
 

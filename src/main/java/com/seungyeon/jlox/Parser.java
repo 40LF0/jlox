@@ -61,7 +61,7 @@ class Parser {
       if (expr instanceof Variable) {
         Token name = ((Variable) expr).name;
         return new Assign(name, value);
-      } else if (expr instanceof  Expr.Get) {
+      } else if (expr instanceof Expr.Get) {
         Expr.Get get = (Expr.Get) expr;
         return new Expr.Set(get.object, get.name, value);
       }
@@ -329,6 +329,8 @@ class Parser {
     if (match(NUMBER, STRING)) {
       return new Literal(previous().literal);
     }
+
+    if (match(THIS)) return new Expr.This(previous());
 
     if (match(IDENTIFIER)) {
       return new Variable(previous());
