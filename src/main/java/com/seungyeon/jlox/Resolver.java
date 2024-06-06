@@ -8,6 +8,7 @@ import com.seungyeon.jlox.Expr.Grouping;
 import com.seungyeon.jlox.Expr.Literal;
 import com.seungyeon.jlox.Expr.Logical;
 import com.seungyeon.jlox.Expr.Set;
+import com.seungyeon.jlox.Expr.Super;
 import com.seungyeon.jlox.Expr.This;
 import com.seungyeon.jlox.Expr.Unary;
 import com.seungyeon.jlox.Expr.Variable;
@@ -27,7 +28,8 @@ import java.util.Stack;
 class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
   private enum ClassType {
     NONE,
-    CLASS
+    CLASS,
+    SUBCLASS
   }
 
   private enum FunctionType {
@@ -62,12 +64,18 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     declare(stmt.name);
     define(stmt.name);
 
-    if (stmt.superclass != null && stmt.name.lexeme.equals(stmt.superclass.name.lexeme)){
+    if (stmt.superclass != null && stmt.name.lexeme.equals(stmt.superclass.name.lexeme)) {
       Lox.error(stmt.superclass.name, "A class can't inherit from itself.");
     }
 
     if (stmt.superclass != null) {
+      currentClass = ClassType.SUBCLASS;
       resolve(stmt.superclass);
+    }
+
+    if (stmt.superclass != null) {
+      beginScope();
+      scopes.peek().put("super", true);
     }
 
     beginScope();
@@ -83,6 +91,8 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     }
 
     endScope();
+
+    if (stmt.superclass != null) endScope();
 
     currentClass = enclosingClass;
     return null;
@@ -203,6 +213,18 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
   public Void visitSetExpr(Set expr) {
     resolve(expr.value);
     resolve(expr.object);
+    return null;
+  }
+
+  @Override
+  public Void visitSuperExpr(Super expr) {
+    if (currentClass == ClassType.CLASS) {
+      Lox.error(expr.keyword, "Can't 'super' outside of a class.");
+    } else if (currentClass != ClassType.SUBCLASS) {
+      Lox.error(expr.keyword, "Can't use 'super' in a class with no superclass.");
+    }
+
+    resolveLocal(expr, expr.keyword);
     return null;
   }
 
